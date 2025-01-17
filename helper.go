@@ -61,6 +61,10 @@ func PrepareCtxData(ctx *kaos.Context, userid, companyid string) *kaos.Context {
 }
 
 func InvokeAPI[M, R any](svc *kaos.Service, uriPath string, payload M, respond R, userid, coid string) (R, error) {
+	if svc == nil {
+		return respond, fmt.Errorf("missing: service, source: invokeAPI %s", uriPath)
+	}
+
 	sr := svc.GetRoute(uriPath)
 	if sr == nil {
 		return respond, fmt.Errorf("missing: route: %s", uriPath)
