@@ -44,12 +44,10 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ariefdarmawan/byter v0.0.2 h1:hZsg3P7pi+CDZbEtL7Y+ZJDgJNTIkGLRIvIe+NiFrso=
 github.com/ariefdarmawan/byter v0.0.2/go.mod h1:0CaYwyUDoab6UBmN5mdDBLmIBiqMiJv+OrTGblCMLdk=
-github.com/ariefdarmawan/datahub v0.3.2-0.20231017211134-f0861fe1b0dd h1:tsPMv1kbGNriESV03EN3+KXUxX/DpY+rJRnHZAhg4TA=
-github.com/ariefdarmawan/datahub v0.3.2-0.20231017211134-f0861fe1b0dd/go.mod h1:UPNuw/lGepNPwJ68ER3R1ZiQKY149L0Sl0yNNimMiFs=
+github.com/ariefdarmawan/datahub v0.3.2-0.20250121104753-3ccb591d2372 h1:mOf21+hG4hDdt8eEe/574pK1WzNi/tVv4pqZ12KyZO4=
+github.com/ariefdarmawan/datahub v0.3.2-0.20250121104753-3ccb591d2372/go.mod h1:1e/ePpqulvRcPPu1CuQrUbjB5fwITr6kPMX4++XQb88=
 github.com/ariefdarmawan/reflector v0.0.3 h1:qbfwP5iKMvdYBWRG2jZyoXRLPsGedJ1sNcC8bw+MhpY=
 github.com/ariefdarmawan/reflector v0.0.3/go.mod h1:xxeY7n6iT0q5pK4j3s8l2xo1CvmQgS2oYtj0lsV4eo4=
-github.com/ariefdarmawan/serde v0.1.1 h1:TIhTKKFfK4WfYcS/hW1nSD81Uqd1jkY9Xli8e/3h/MA=
-github.com/ariefdarmawan/serde v0.1.1/go.mod h1:geSqYU2wYlGlmOePjLbU9S1A4FkkaQB59vuAnTeZclM=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
@@ -181,8 +179,6 @@ github.com/samber/lo v1.38.1/go.mod h1:+m/ZKRl6ClXCE2Lgf3MsQlWfh4bn1bz6CXEOxnEXn
 github.com/sebarcode/codekit v0.1.0/go.mod h1:o54sVKGC7+M1leMkKhVXssOXwuHCylW5GJto0UiQJEg=
 github.com/sebarcode/codekit v0.1.4 h1:k/GS7qjDSbRD1fmo02LgGrD1ab7m21zAs/eqm7tIXfM=
 github.com/sebarcode/codekit v0.1.4/go.mod h1:CNHNFOALfsqgDmu+GIFSo4RAoCsECBCS84RmHbqj88I=
-github.com/sebarcode/kiva v0.1.1-0.20231016042605-2eec2a1c368a h1:JIdJJALTttB3fDwUmJ9LOctjj7406ggYgWgAO8wOfW8=
-github.com/sebarcode/kiva v0.1.1-0.20231016042605-2eec2a1c368a/go.mod h1:5tvyXAfRrHF2lmatjsHQUF712cI0K+gKFNpO9STXoB8=
 github.com/sebarcode/logger v0.1.1 h1:qy8Ip5UacaK4LFE0hN/HXUCIu3ZBe4uta8WHQ067jfQ=
 github.com/sebarcode/logger v0.1.1/go.mod h1:dBcREBmgQLUN1kAAs5t9y7dN5RUp+OYEsk4rqUWuM5Q=
 github.com/smarty/assertions v1.15.0 h1:cR//PqUBUiQRakZWqBiFFQ9wb8emQGDb0HeGdqGByCY=
@@ -356,8 +352,8 @@ golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211019181941-9d821ace8654/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220412211240-33da011f77ad/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a h1:dGzPydgVsqGcTRVwiLJ1jVbufYwmzD3LfVPLKsKg+0k=
-golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.6.0 h1:MVltZSvRTcU2ljQOhs94SXPftV6DCNnZViHeQps87pQ=
+golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

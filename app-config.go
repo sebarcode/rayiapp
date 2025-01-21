@@ -11,13 +11,18 @@ var (
 	AppConfigVariables codekit.M
 )
 
+type ConnectionInfo struct {
+	Txt           string
+	UseTx         bool
+	PoolSize      int
+	Timeout       int
+	AutoReleaseMs int
+	AutoCloseMs   int
+}
+
 type AppConfig struct {
 	Hosts       map[string]string
-	Connections map[string]struct {
-		Txt      string
-		UseTx    bool
-		PoolSize int
-	}
+	Connections map[string]ConnectionInfo
 
 	Services map[string]ServiceConfig
 	Data     codekit.M
@@ -26,11 +31,7 @@ type AppConfig struct {
 func NewAppConfig() *AppConfig {
 	a := new(AppConfig)
 	a.Hosts = make(map[string]string)
-	a.Connections = make(map[string]struct {
-		Txt      string
-		UseTx    bool
-		PoolSize int
-	})
+	a.Connections = make(map[string]ConnectionInfo)
 	return a
 }
 

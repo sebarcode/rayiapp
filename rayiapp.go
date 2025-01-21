@@ -114,30 +114,45 @@ func (app *App) Start() error {
 
 func (app *App) StartDataHub() error {
 	hm := kaos.NewHubManager(nil)
-	vTenantConn := ""
-	vTenantUseTx := false
-	vTenantPoolSize := 100
+	vTenant := new(ConnectionInfo)
+	vTenant.UseTx = false
+	vTenant.PoolSize = 100
+	vTenant.Timeout = 120
+	vTenant.AutoCloseMs = 2000
+	vTenant.AutoReleaseMs = 0
 
 	for k, v := range app.Config.Connections {
 		if k == "tenant" {
-			vTenantConn = v.Txt
-			vTenantPoolSize = v.PoolSize
-			vTenantUseTx = v.UseTx
+			vTenant.Txt = v.Txt
+			vTenant.PoolSize = v.PoolSize
+			vTenant.UseTx = v.UseTx
+			if v.Timeout > 0 {
+				vTenant.Timeout = v.Timeout
+			}
+			if v.AutoCloseMs > 0 {
+				vTenant.AutoCloseMs = v.AutoCloseMs
+			}
+			if v.AutoReleaseMs > 0 {
+				vTenant.AutoReleaseMs = v.AutoReleaseMs
+			}
 			continue
 		}
 		hconn := datahub.NewHub(datahub.GeneralDbConnBuilderWithTx(v.Txt, v.UseTx), true, v.PoolSize)
-		hconn.SetAutoCloseDuration(2 * time.Second)
+		hconn.SetTimeout(time.Duration(v.Timeout) * time.Second)
+		hconn.SetAutoCloseDuration(time.Duration(v.AutoCloseMs) * time.Millisecond)
+		hconn.SetAutoReleaseDuration(time.Duration(v.AutoReleaseMs) * time.Millisecond)
 		hm.Set(k, "", hconn)
 		app.Logger().Infof("loading data connection %s", k)
 	}
 
 	hm.SetHubBuilder(func(key, group string) (*datahub.Hub, error) {
-		vTenantConnStr := vTenantConn
+		vTenantConnStr := vTenant.Txt
 		if strings.Contains(vTenantConnStr, "%s") {
-			vTenantConnStr = fmt.Sprintf(vTenantConn, key)
+			vTenantConnStr = fmt.Sprintf(vTenantConnStr, key)
 		}
-		hconn := datahub.NewHub(datahub.GeneralDbConnBuilderWithTx(vTenantConnStr, vTenantUseTx), true, vTenantPoolSize)
+		hconn := datahub.NewHub(datahub.GeneralDbConnBuilderWithTx(vTenantConnStr, vTenant.UseTx), true, vTenant.PoolSize)
 		hconn.SetAutoCloseDuration(2 * time.Second)
+		hconn.SetAutoReleaseDuration(0 * time.Second)
 		return hconn, nil
 	})
 
