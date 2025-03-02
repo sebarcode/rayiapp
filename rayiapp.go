@@ -87,17 +87,17 @@ func CreateApp(configFile string, opts *AppOpts) (*App, error) {
 		app.deployers[name] = *depl
 	}
 
+	// load data connection
+	if err := app.StartDataHub(); err != nil {
+		return app, err
+	}
+
 	return app, nil
 }
 
 func (app *App) Start() error {
 	app.mux = http.NewServeMux()
 	app.opts.Logger.Infof("starting app %s", app.Name)
-
-	// load data connection
-	if err := app.StartDataHub(); err != nil {
-		return err
-	}
 
 	// load deployer
 	if err := app.StartDeployer(); err != nil {
