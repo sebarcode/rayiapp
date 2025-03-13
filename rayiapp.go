@@ -198,7 +198,7 @@ func (app *App) StartPublisher() error {
 			return fmt.Errorf("failed to load publisher for event hub %s. %v", name, err)
 		}
 		app.service.RegisterEventHub(ev, name, svcConfig.Secret)
-		app.Logger().Infof("loading publisher for %s, %s, %s", name, svcConfig.Provider, svcConfig.Server)
+		app.Logger().Infof("loading publisher for %s, %s, %s", name, svcConfig.Provider, evConfig.Server)
 	}
 	return nil
 }
