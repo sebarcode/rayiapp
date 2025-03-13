@@ -25,7 +25,7 @@ func (s *ServiceConfig) ToEventServerConfig(serviceName string, app *App) *kaos.
 		s.Data = codekit.M{}
 	}
 	return &kaos.EventServerConfig{
-		Name:              s.Name,
+		Name:              serviceName,
 		Server:            host,
 		Provider:          s.Provider,
 		DeployerParamType: kaos.DeployerParamType(s.ParamType),
