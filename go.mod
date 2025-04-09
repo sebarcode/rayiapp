@@ -1,18 +1,18 @@
 module github.com/sebarcode/rayiapp
 
-go 1.22.7
+go 1.23.4
 
 require (
 	git.kanosolution.net/kano/kaos v0.3.9-0.20250102023848-4da1e5e043c5
 	github.com/ariefdarmawan/datahub v0.3.2-0.20250121104753-3ccb591d2372
+	github.com/sebarcode/dbmod v0.1.2
 	github.com/sebarcode/logger v0.1.1
 )
 
 require (
+	github.com/ariefdarmawan/serde v0.1.0 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
-	github.com/stretchr/testify v1.7.2 // indirect
-	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
 
 require (
