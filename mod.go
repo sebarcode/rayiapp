@@ -10,29 +10,35 @@ var (
 	mapIntegrations = map[string][]string{}
 )
 
-func PostMWIntegration(ctx *kaos.Context, payload interface{}) (bool, error) {
-	apiPath := ctx.Data().Get("path", "").(string)
-	if apiPath == "" {
-		return true, nil
+func PostMWIntegration(eventHubName string) func(ctx *kaos.Context, payload interface{}) (bool, error) {
+	if eventHubName == "" {
+		eventHubName = "integration"
 	}
-	evi := ctx.EventHubs()["integration"]
-	if evi == nil {
-		return true, nil
-	}
-	go func() {
-		subjects, has := mapIntegrations[apiPath]
-		if has {
-			for _, subject := range subjects {
-				fnRes := ctx.Data().Get("FnResult", nil)
-				go evi.Publish(
-					subject,
-					fnRes, nil, &kaos.PublishOpts{
-						Headers: ctx.Data().Data(),
-					})
-			}
+
+	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
+		apiPath := ctx.Data().Get("path", "").(string)
+		if apiPath == "" {
+			return true, nil
 		}
-	}()
-	return true, nil
+		evi := ctx.EventHubs()[eventHubName]
+		if evi == nil {
+			return true, nil
+		}
+		go func() {
+			subjects, has := mapIntegrations[apiPath]
+			if has {
+				for _, subject := range subjects {
+					fnRes := ctx.Data().Get("FnResult", nil)
+					go evi.Publish(
+						subject,
+						fnRes, nil, &kaos.PublishOpts{
+							Headers: ctx.Data().Data(),
+						})
+				}
+			}
+		}()
+		return true, nil
+	}
 }
 
 func RegisterIntegration(apiPath string, subject string) error {

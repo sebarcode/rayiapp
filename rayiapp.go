@@ -59,11 +59,7 @@ func CreateApp(configFile string, opts *AppOpts) (*App, error) {
 	}
 	app := new(App)
 	app.opts = opts
-
-	if app.Name == "" {
-		app.Name = "RayiApp " + codekit.GenerateRandomString("ABCDEFGHIJKLMNOPQRTUVWXYZ0123456789", 6)
-	}
-
+	app.Name = "RayiApp-" + codekit.GenerateRandomString("ABCDEFGHIJKLMNOPQRTUVWXYZ0123456789", 6)
 	app.deployers = make(map[string]DeployerConfig)
 	app.eventhubs = make(map[string]kaos.EventServerConfig)
 	app.service = kaos.NewService()
