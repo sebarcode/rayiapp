@@ -29,6 +29,10 @@ func CopyContextDataToPublishOptions(ctx *kaos.Context, opts *kaos.PublishOpts, 
 		dataNames = ctx.Data().Keys()
 	}
 
+	if opts == nil {
+		opts = &kaos.PublishOpts{}
+	}
+
 	ctxData := ctx.Data().Data()
 	for _, dataName := range dataNames {
 		v, ok := ctxData[dataName]
