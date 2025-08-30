@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"git.kanosolution.net/kano/kaos"
+	"github.com/sebarcode/codekit"
 )
 
 const (
@@ -30,7 +31,10 @@ func CopyContextDataToPublishOptions(ctx *kaos.Context, opts *kaos.PublishOpts, 
 	}
 
 	if opts == nil {
-		opts = &kaos.PublishOpts{}
+		opts = &kaos.PublishOpts{
+			Headers: codekit.M{},
+			Config:  codekit.M{},
+		}
 	}
 
 	ctxData := ctx.Data().Data()
