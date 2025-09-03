@@ -8,7 +8,10 @@ import (
 )
 
 const (
+	CtxJwtToken       = "jwt_token"
 	CtxJWTReferenceID = "jwt_reference_id"
+	CtxJwtClientData  = "jwt_client_data"
+	CtxJwtSessionData = "jwt_session_data"
 	HTTP_REQUEST      = "http_request"
 	HTTP_WRITER       = "http_writer"
 )
