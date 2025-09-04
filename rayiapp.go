@@ -137,6 +137,7 @@ func (app *App) StartDataHub() error {
 		hconn.SetTimeout(time.Duration(v.Timeout) * time.Second)
 		hconn.SetAutoCloseDuration(time.Duration(v.AutoCloseMs) * time.Millisecond)
 		hconn.SetAutoReleaseDuration(time.Duration(v.AutoReleaseMs) * time.Millisecond)
+		hconn.SetLog(app.Logger())
 		hm.Set(k, "", hconn)
 		app.Logger().Infof("loading data connection %s", k)
 	}
@@ -149,6 +150,7 @@ func (app *App) StartDataHub() error {
 		hconn := datahub.NewHub(datahub.GeneralDbConnBuilderWithTx(vTenantConnStr, vTenant.UseTx), true, vTenant.PoolSize)
 		hconn.SetAutoCloseDuration(2 * time.Second)
 		hconn.SetAutoReleaseDuration(0 * time.Second)
+		hconn.SetLog(app.Logger())
 		return hconn, nil
 	})
 
