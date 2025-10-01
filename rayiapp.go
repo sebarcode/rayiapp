@@ -188,6 +188,9 @@ func (app *App) StartPublisher() error {
 
 		evConfig := svcConfig.ToEventServerConfig(name, app)
 		ev, err := kaos.NewEventHub(*evConfig)
+		if err != nil {
+			return fmt.Errorf("failed to create event hub %s. %v", name, err)
+		}
 		basePath := svcConfig.Data.Get("base_path", "").(string)
 		if basePath != "" {
 			ev.SetPrefix(basePath)
