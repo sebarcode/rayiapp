@@ -132,7 +132,7 @@ func MWPostGetsExtractForeignField(model orm.DataModel, prefix, fieldName string
 }
 
 func MWPostGetsExtractForeignFieldArray(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
-	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
+	return func(ctx *kaos.Context, payload any) (bool, error) {
 		msRes := []codekit.M{}
 		mOrigRes := ctx.Data().Get("FnResult", codekit.M{}).(codekit.M)
 		err := serde.Serde(mOrigRes.Get("data"), &msRes)
@@ -151,7 +151,7 @@ func MWPostGetsExtractForeignFieldArray(model orm.DataModel, prefix, fieldName s
 			catIDs := m.Get(fieldName, []string{}).([]string)
 			mapOthers := map[string][]interface{}{}
 			for _, other := range otherName {
-				mapOthers[other] = []interface{}{}
+				mapOthers[other] = []any{}
 			}
 			for _, catID := range catIDs {
 				cat, err := mrCat.Get(catID)
