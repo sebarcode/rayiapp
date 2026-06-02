@@ -10,7 +10,7 @@ import (
 	"github.com/sebarcode/codekit"
 )
 
-func MWPostFindExtractForeignField(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
+func MwPostFindExtractForeignField(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
 	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
 		msRes := []codekit.M{}
 		err := serde.Serde(ctx.Data().Get("FnResult", []codekit.M{}), &msRes)
@@ -45,7 +45,7 @@ func MWPostFindExtractForeignField(model orm.DataModel, prefix, fieldName string
 	}
 }
 
-func MWPostFindExtractForeignFieldArray(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
+func MwPostFindExtractForeignFieldArray(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
 	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
 		/*
 			msRes := []codekit.M{}
@@ -94,7 +94,7 @@ func MWPostFindExtractForeignFieldArray(model orm.DataModel, prefix, fieldName s
 	}
 }
 
-func MWPostGetsExtractForeignField(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
+func MwPostGetsExtractForeignField(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
 	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
 		msRes := []codekit.M{}
 		mOrigRes := ctx.Data().Get("FnResult", codekit.M{}).(codekit.M)
@@ -131,7 +131,7 @@ func MWPostGetsExtractForeignField(model orm.DataModel, prefix, fieldName string
 	}
 }
 
-func MWPostGetsExtractForeignFieldArray(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
+func MwPostGetsExtractForeignFieldArray(model orm.DataModel, prefix, fieldName string, otherName ...string) kaos.MWFunc {
 	return func(ctx *kaos.Context, payload any) (bool, error) {
 		msRes := []codekit.M{}
 		mOrigRes := ctx.Data().Get("FnResult", codekit.M{}).(codekit.M)
