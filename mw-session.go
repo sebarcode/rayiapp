@@ -1,0 +1,132 @@
+package rayiapp
+
+import (
+	"errors"
+	"reflect"
+	"slices"
+	"strconv"
+	"strings"
+
+	"git.kanosolution.net/kano/dbflex"
+	"git.kanosolution.net/kano/kaos"
+)
+
+func MwStoreToken(needJwt bool) func(ctx *kaos.Context, _ interface{}) (bool, error) {
+	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
+		req := ctx.HttpRequest()
+		if req == nil {
+			return false, errors.New("missing http request")
+		}
+		authHeader := req.Header.Get("Authorization")
+		if authHeader == "" {
+			if needJwt {
+				return false, errors.New("missing authorization header")
+			}
+		}
+		const bearerPrefix = "Bearer "
+		if len(authHeader) <= len(bearerPrefix) || authHeader[:len(bearerPrefix)] != bearerPrefix {
+			if needJwt {
+				return false, errors.New("invalid authorization header format")
+			}
+		} else {
+			tokenString := authHeader[len(bearerPrefix):]
+			ctx.Data().Set("jwt_token", tokenString)
+		}
+		return true, nil
+	}
+}
+
+func MwValidateJWT(validateDb, continueIfInvalidJWT bool) func(ctx *kaos.Context, _ interface{}) (bool, error) {
+	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
+		tokenString := GetJwtToken(ctx)
+		if tokenString == "" {
+			if !continueIfInvalidJWT {
+				return false, errors.New("missing jwt token")
+			}
+		}
+		ev, _ := ctx.DefaultEvent()
+		if ev == nil {
+			if !continueIfInvalidJWT {
+				return false, errors.New("missing rbac event")
+			}
+		}
+		request := ValidateJwtRequest{
+			Token:       tokenString,
+			GetSessData: validateDb,
+		}
+		response := ValidateJwtResponse{}
+		err := ev.Publish("/rbac/validate-jwt", &request, &response, nil)
+		if err != nil {
+			if !continueIfInvalidJWT {
+				return false, err
+			}
+		}
+		SetCtxDataWithSessionInfo(ctx, &RbacSession{
+			ID:     response.SessionID,
+			UserID: response.UserID,
+			Data:   response.SessionData,
+		}, response.ClientData)
+		return true, nil
+	}
+}
+
+func MwCheckRole(roleIds ...string) kaos.MWFunc {
+	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
+		role := ctx.Data().Get("appuser_role", "").(string)
+		if role == "" {
+			return false, errors.New("missing role in context")
+		}
+		if !slices.Contains(roleIds, role) {
+			return false, errors.New("unauthorized_invalid_role_access")
+		}
+		return true, nil
+	}
+}
+
+func MwCheckPolicy(policyid string, policyValue int) kaos.MWFunc {
+	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
+		policies := strings.SplitSeq(ctx.Data().Get("appuser_policy", "").(string), "|")
+		for policytxt := range policies {
+			parts := strings.Split(policytxt, ":")
+			if len(parts) != 2 {
+				continue
+			}
+			if parts[0] == policyid {
+				policyValInt, err := strconv.Atoi(parts[1])
+				if err != nil {
+					continue
+				}
+				if policyValInt&policyValue == policyValue {
+					return true, nil
+				}
+			}
+		}
+		return false, errors.New("unauthorized_invalid_policy_access")
+	}
+}
+
+func MwLimitTake(limit int) kaos.MWFunc {
+	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
+		if limit <= 0 {
+			return false, errors.New("invalid limit value")
+		}
+
+		smPath := ctx.Data().Get("path", "").(string)
+		if !(strings.HasSuffix(smPath, "/gets") || strings.HasSuffix(smPath, "/find")) {
+			return true, nil
+		}
+
+		qp, ok := payload.(*dbflex.QueryParam)
+		if !ok {
+			return false, errors.New("payload is not a QueryParam")
+		}
+		take := qp.Take
+		if take > limit || take == 0 {
+			qp.Take = limit
+		}
+		val := reflect.ValueOf(payload)
+		val.Elem().Set(reflect.ValueOf(qp).Elem())
+
+		return true, nil
+	}
+}
