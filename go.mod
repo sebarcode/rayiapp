@@ -1,6 +1,6 @@
 module github.com/sebarcode/rayiapp
 
-go 1.23.4
+go 1.24
 
 require (
 	git.kanosolution.net/kano/kaos v0.3.9-0.20250102023848-4da1e5e043c5

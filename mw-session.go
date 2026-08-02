@@ -11,34 +11,43 @@ import (
 	"git.kanosolution.net/kano/kaos"
 )
 
+func storeToken(ctx *kaos.Context, needJwt bool) (string, error) {
+	req := ctx.HttpRequest()
+	if req == nil {
+		return "", errors.New("missing http request")
+	}
+	authHeader := req.Header.Get("Authorization")
+	if authHeader == "" {
+		if needJwt {
+			return "", errors.New("missing authorization header")
+		} else {
+			return "", nil
+		}
+
+	}
+	const bearerPrefix = "Bearer "
+	if len(authHeader) <= len(bearerPrefix) || authHeader[:len(bearerPrefix)] != bearerPrefix {
+		if needJwt {
+			return "", errors.New("invalid authorization header format")
+		}
+	} else {
+		tokenString := authHeader[len(bearerPrefix):]
+		ctx.Data().Set("jwt_token", tokenString)
+		return tokenString, nil
+	}
+	return "", nil
+}
+
 func MwStoreToken(needJwt bool) func(ctx *kaos.Context, _ interface{}) (bool, error) {
 	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
-		req := ctx.HttpRequest()
-		if req == nil {
-			return false, errors.New("missing http request")
-		}
-		authHeader := req.Header.Get("Authorization")
-		if authHeader == "" {
-			if needJwt {
-				return false, errors.New("missing authorization header")
-			}
-		}
-		const bearerPrefix = "Bearer "
-		if len(authHeader) <= len(bearerPrefix) || authHeader[:len(bearerPrefix)] != bearerPrefix {
-			if needJwt {
-				return false, errors.New("invalid authorization header format")
-			}
-		} else {
-			tokenString := authHeader[len(bearerPrefix):]
-			ctx.Data().Set("jwt_token", tokenString)
-		}
-		return true, nil
+		_, err := storeToken(ctx, needJwt)
+		return err == nil, err
 	}
 }
 
 func MwValidateJWT(validateDb, continueIfInvalidJWT bool) func(ctx *kaos.Context, _ interface{}) (bool, error) {
 	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
-		tokenString := GetJwtToken(ctx)
+		tokenString, _ := storeToken(ctx, true)
 		if tokenString == "" {
 			if !continueIfInvalidJWT {
 				return false, errors.New("missing jwt token")

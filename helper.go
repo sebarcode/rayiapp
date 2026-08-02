@@ -73,3 +73,12 @@ func InvokeAPI[M, R any](svc *kaos.Service, uriPath string, payload M, respond R
 	e := svc.CallTo(uriPath, respond, ctx, payload)
 	return respond, e
 }
+
+func GetTenantID(ctx *kaos.Context) string {
+	jwtdata := ctx.Data().Get("jwt_data", codekit.M{}).(codekit.M)
+	tenantID := jwtdata.GetString("TenantID")
+	if tenantID == "" {
+		tenantID = "Demo"
+	}
+	return tenantID
+}

@@ -6,9 +6,9 @@ import (
 
 	"errors"
 
+	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/kaos"
 	"github.com/ariefdarmawan/datahub"
-	"github.com/sebarcode/codekit"
 	"github.com/sebarcode/dbmod"
 )
 
@@ -31,11 +31,7 @@ func GetTenantDB(ctx *kaos.Context, name string) *datahub.Hub {
 }
 
 func GetTenantDBFromContext(ctx *kaos.Context) *datahub.Hub {
-	jwtdata := ctx.Data().Get("jwt_data", codekit.M{}).(codekit.M)
-	tenantID := jwtdata.GetString("TenantID")
-	if tenantID == "" {
-		tenantID = "Demo"
-	}
+	tenantID := GetTenantID(ctx)
 	h, _ := ctx.GetHub(tenantID, "tenant")
 	return h
 }
@@ -95,4 +91,10 @@ func Tx(h *datahub.Hub, allowNonTx bool, fn func(tx *datahub.Hub) error) (e erro
 	}
 
 	return nil
+}
+
+func FilterByTenantID(ctx *kaos.Context, queryParam *dbflex.QueryParam) *dbflex.QueryParam {
+	tid := GetTenantID(ctx)
+	queryParam.MergeWhere(false, dbflex.Eq("TenantID", tid))
+	return queryParam
 }
