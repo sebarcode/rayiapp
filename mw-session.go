@@ -99,9 +99,6 @@ func MwCheckRole(role string) kaos.MWFunc {
 				}
 			}
 		}
-		if len(roleIds) == 0 {
-			return false, errors.New("missing role in context")
-		}
 		if !slices.Contains(roleIds, role) {
 			return false, errors.New("unauthorized_invalid_role_access")
 		}
