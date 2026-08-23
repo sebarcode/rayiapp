@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 	"slices"
-	"strconv"
 	"strings"
 
 	"git.kanosolution.net/kano/dbflex"
@@ -38,15 +37,15 @@ func storeToken(ctx *kaos.Context, needJwt bool) (string, error) {
 	return "", nil
 }
 
-func MwStoreToken(needJwt bool) func(ctx *kaos.Context, _ interface{}) (bool, error) {
-	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
+func MwStoreToken(needJwt bool) func(ctx *kaos.Context, _ any) (bool, error) {
+	return func(ctx *kaos.Context, _ any) (bool, error) {
 		_, err := storeToken(ctx, needJwt)
 		return err == nil, err
 	}
 }
 
-func MwValidateJWT(validateDb, continueIfInvalidJWT bool) func(ctx *kaos.Context, _ interface{}) (bool, error) {
-	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
+func MwValidateJWT(validateDb, continueIfInvalidJWT bool) func(ctx *kaos.Context, _ any) (bool, error) {
+	return func(ctx *kaos.Context, _ any) (bool, error) {
 		tokenString, _ := storeToken(ctx, true)
 		if tokenString == "" {
 			if !continueIfInvalidJWT {
@@ -79,10 +78,28 @@ func MwValidateJWT(validateDb, continueIfInvalidJWT bool) func(ctx *kaos.Context
 	}
 }
 
-func MwCheckRole(roleIds ...string) kaos.MWFunc {
-	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
-		role := ctx.Data().Get("appuser_role", "").(string)
-		if role == "" {
+func MwCheckRole(role string) kaos.MWFunc {
+	return func(ctx *kaos.Context, _ any) (bool, error) {
+		roles := ctx.Data().Get("Roles", nil)
+		if roles == nil {
+			clientData := GetJwtClientData(ctx)
+			if clientData != nil {
+				roles = clientData.Get("Roles", nil)
+			}
+		}
+
+		roleIds := []string{}
+		switch values := roles.(type) {
+		case []string:
+			roleIds = values
+		case []any:
+			for _, value := range values {
+				if roleID, ok := value.(string); ok {
+					roleIds = append(roleIds, roleID)
+				}
+			}
+		}
+		if len(roleIds) == 0 {
 			return false, errors.New("missing role in context")
 		}
 		if !slices.Contains(roleIds, role) {
@@ -93,21 +110,14 @@ func MwCheckRole(roleIds ...string) kaos.MWFunc {
 }
 
 func MwCheckPolicy(policyid string, policyValue int) kaos.MWFunc {
-	return func(ctx *kaos.Context, _ interface{}) (bool, error) {
-		policies := strings.SplitSeq(ctx.Data().Get("appuser_policy", "").(string), "|")
-		for policytxt := range policies {
-			parts := strings.Split(policytxt, ":")
-			if len(parts) != 2 {
-				continue
-			}
-			if parts[0] == policyid {
-				policyValInt, err := strconv.Atoi(parts[1])
-				if err != nil {
-					continue
-				}
-				if policyValInt&policyValue == policyValue {
-					return true, nil
-				}
+	return func(ctx *kaos.Context, _ any) (bool, error) {
+		policies, ok := ctx.Data().Get("Policies", map[string]int{}).(map[string]int)
+		if !ok {
+			return false, errors.New("unauthorized_invalid_policy_access")
+		}
+		if val, exists := policies[policyid]; exists {
+			if val&policyValue == policyValue {
+				return true, nil
 			}
 		}
 		return false, errors.New("unauthorized_invalid_policy_access")
@@ -115,7 +125,7 @@ func MwCheckPolicy(policyid string, policyValue int) kaos.MWFunc {
 }
 
 func MwLimitTake(limit int) kaos.MWFunc {
-	return func(ctx *kaos.Context, payload interface{}) (bool, error) {
+	return func(ctx *kaos.Context, payload any) (bool, error) {
 		if limit <= 0 {
 			return false, errors.New("invalid limit value")
 		}
