@@ -14,7 +14,7 @@ const (
 	HttpWriter     string = "http_writer"
 	HttpRequest    string = "http_request"
 	JwtReferenceID string = "jwt_reference_id"
-	JwtData        string = "jwt_data"
+	JwtData        string = "jwt_clien_data"
 )
 
 func ReadConfig(configPath string, dest interface{}) error {
@@ -75,7 +75,7 @@ func InvokeAPI[M, R any](svc *kaos.Service, uriPath string, payload M, respond R
 }
 
 func GetTenantID(ctx *kaos.Context) string {
-	jwtdata := ctx.Data().Get("jwt_data", codekit.M{}).(codekit.M)
+	jwtdata := ctx.Data().Get(CtxJwtClientData, codekit.M{}).(codekit.M)
 	tenantID := jwtdata.GetString("TenantID")
 	if tenantID == "" {
 		tenantID = "Demo"
