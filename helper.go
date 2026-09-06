@@ -77,8 +77,5 @@ func InvokeAPI[M, R any](svc *kaos.Service, uriPath string, payload M, respond R
 func GetTenantID(ctx *kaos.Context) string {
 	jwtdata := ctx.Data().Get(CtxJwtClientData, codekit.M{}).(codekit.M)
 	tenantID := jwtdata.GetString("TenantID")
-	if tenantID == "" {
-		tenantID = "Demo"
-	}
 	return tenantID
 }

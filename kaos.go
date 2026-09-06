@@ -37,10 +37,13 @@ func CopyContextDataToPublishOptions(ctx *kaos.Context, opts *kaos.PublishOpts, 
 	}
 
 	if opts == nil {
-		opts = &kaos.PublishOpts{
-			Headers: codekit.M{},
-			Config:  codekit.M{},
-		}
+		opts = new(kaos.PublishOpts)
+	}
+	if opts.Headers == nil {
+		opts.Headers = codekit.M{}
+	}
+	if opts.Config == nil {
+		opts.Config = codekit.M{}
 	}
 
 	ctxData := ctx.Data().Data()
@@ -49,6 +52,11 @@ func CopyContextDataToPublishOptions(ctx *kaos.Context, opts *kaos.PublishOpts, 
 		if ok {
 			opts.Headers.Set(dataName, v)
 		}
+	}
+	if tenantID := GetTenantID(ctx); tenantID != "" {
+		// HTEV only forwards string-valued headers. Flatten TenantID from the
+		// jwt_client_data map so tenant context survives service-to-service calls.
+		opts.Headers.Set("TenantID", tenantID)
 	}
 
 	return opts
